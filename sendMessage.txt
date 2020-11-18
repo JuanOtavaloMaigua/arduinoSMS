@@ -1,0 +1,44 @@
+#include <SoftwareSerial.h>
+SoftwareSerial mySerial(9, 10);
+
+void setup() {
+  // put your setup code here, to run once:
+  mySerial.begin(9600);     //Setting the baud rate of GSM module
+  Serial.begin(9600);      // setting the baud rate of serial mopnitor (arduino)
+  delay(100);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  if (Serial.available()>0)
+    switch(Serial.read())
+  {
+    case 's':
+      SendMessage();
+      break;
+    case 'r':
+      RecieveMessage();
+      break;
+  }
+
+  if (mySerial.available()>0)
+    Serial.write(mySerial.read());
+}
+
+void SendMessage()
+{
+  mySerial.println("AT+CMGF=1");
+  delay(100);
+  mySerial.println("AT+CMGS=\"+919767800864\"\r");
+  delay(100);
+  mySerial.println("I am SMS from GSM module");
+  delay(100);
+  mySerial.println((char)26);
+  delay(100);
+}
+
+void RecieveMessage()
+{
+  mySerial.println("AT+CNMI=2,2,0,0,0");
+  delay(100);
+}
